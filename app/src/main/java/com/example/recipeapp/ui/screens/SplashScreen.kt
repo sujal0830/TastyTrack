@@ -19,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.recipeapp.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 @Composable
@@ -26,10 +28,23 @@ fun SplashScreen(navController: NavController) {
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
+        // Animation
         alpha.animateTo(1f, animationSpec = tween(1500))
         delay(2000)
-        navController.navigate("home") {
-            popUpTo("splash") { inclusive = true }
+        
+        // Auth Check
+        val user = Firebase.auth.currentUser
+        
+        if (user != null) {
+            // User is logged in -> Home
+            navController.navigate("home") {
+                popUpTo("splash") { inclusive = true }
+            }
+        } else {
+            // User is NOT logged in -> Login
+            navController.navigate("login") {
+                popUpTo("splash") { inclusive = true }
+            }
         }
     }
 
